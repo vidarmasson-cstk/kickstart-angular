@@ -6,3 +6,5 @@ dist/
 .angular/
 .vscode/
 *.log
+# Contentstack Launch project link
+.cs-launch.json

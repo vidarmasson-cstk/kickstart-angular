@@ -1,68 +1,69 @@
-<main class="max-w-screen-md mx-auto">
-  <section class="p-4">
+<main>
+  @if (error()) {
+    <p class="ck-container py-12 text-ck-red">{{ error() }}</p>
+  }
 
-    @if (error()) {
-      <p>{{error()}}</p>
-    }
-    
-    @if (page()?.title) {
-      <h1 class="text-4xl font-bold mb-4"
-          [attr.data-cslp]="page()?.$ && page()?.$.title['data-cslp']">
-        {{ page()?.title }}
-      </h1>
-    }
+  <section class="bg-ck-red text-white">
+    <div class="ck-container grid items-center gap-10 py-20 md:grid-cols-2">
+      <div>
+        @if (page()?.title) {
+          <h1 class="text-5xl md:text-7xl" [attr.data-cslp]="page()?.$ && page()?.$.title['data-cslp']">
+            {{ page()?.title }}
+          </h1>
+        }
+        @if (page()?.description) {
+          <p class="mt-5 max-w-xl text-lg opacity-90" [attr.data-cslp]="page()?.$ && page()?.$.description['data-cslp']">
+            {{ page()?.description }}
+          </p>
+        }
+      </div>
+      @if (page()?.image) {
+        <img class="w-full rounded-2xl shadow-2xl"
+          width="768"
+          height="414"
+          [src]="page()?.image?.url"
+          [alt]="page()?.image?.title"
+          [attr.data-cslp]="page()?.image.$ && page()?.image.$.url['data-cslp']" />
+      }
+    </div>
+    <div class="h-2 bg-ck-orange"></div>
+  </section>
 
-    @if (page()?.description) {
-      <p class="mb-4"
-         [attr.data-cslp]="page()?.$ && page()?.$.description['data-cslp']">
-        {{ page()?.description }}
-      </p>
-    }
-
-    @if (page()?.image) {
-      <img class="mb-4"
-        width="768"
-        height="414"
-        [src]="page()?.image?.url"
-        [alt]="page()?.image?.title"
-        [attr.data-cslp]="page()?.image.$ && page()?.image.$.url['data-cslp']" />
-    }
-
+  <section class="ck-container py-12">
     @if (page()?.rich_text) {
-      <div [attr.data-cslp]="page()?.$ && page()?.$.rich_text['data-cslp']"
+      <div class="ck-prose max-w-3xl text-lg" [attr.data-cslp]="page()?.$ && page()?.$.rich_text['data-cslp']"
         [innerHTML]="page()?.rich_text">
       </div>
     }
 
-    <div class="space-y-8 max-w-full mt-4" [attr.data-cslp]="page()?.$ && page()?.$.blocks['data-cslp']">
+    <div class="mt-8 space-y-8" [attr.data-cslp]="page()?.$ && page()?.$.blocks['data-cslp']">
       @for (item of page()?.blocks; track $index; let index = $index) {
         <div [attr.data-cslp]="page()?.$ && page()?.$['blocks__' + index]['data-cslp']"
-          class="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 bg-slate-100"
+          class="flex flex-col items-center gap-6 overflow-hidden rounded-2xl bg-ck-grey md:flex-row"
           [class.md:flex-row]="item.block.layout === 'image_left'"
           [class.md:flex-row-reverse]="item.block.layout !== 'image_left'">
-          
+
           <div class="w-full md:w-1/2">
             @if (item.block.image) {
               <img [src]="item.block.image.url"
                 [alt]="item.block.image.title"
                 width="200"
                 height="112"
-                class="w-full" 
+                class="w-full"
                 [attr.data-cslp]="item.block?.image.$ && item.block?.image.$.url['data-cslp']"
               />
             }
           </div>
-          
-          <div class="w-full md:w-1/2 p-4">
+
+          <div class="w-full p-6 md:w-1/2">
             @if (item.block.title) {
-              <h2 class="text-2xl font-bold" 
-                [attr.data-cslp]="item.block.$ && item.block.$.title['data-cslp']">
+              <h2 class="text-4xl" [attr.data-cslp]="item.block.$ && item.block.$.title['data-cslp']">
                 {{ item.block.title }}
               </h2>
             }
-            
+
             @if (item.block.copy) {
-              <div class="prose"
+              <div class="ck-prose mt-3"
                    [attr.data-cslp]="item.block.$ && item.block.$.copy['data-cslp']"
                    [innerHTML]="item.block.copy">
               </div>

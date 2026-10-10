@@ -65,12 +65,38 @@ export class ContentstackService {
         .where("url", QueryOperation.EQUALS, url)
         .find<Page>()
         .then((result: any) => {
-          if (config.preview) {
-            contentstack.default.Utils.addEditableTags(result.entries[0], contentType, true);
+          const entry = result.entries?.[0];
+          if (entry && config.preview) {
+            contentstack.default.Utils.addEditableTags(entry, contentType, true);
           }
 
-          return result.entries[0]
+          return entry
         })
     );
+  }
+
+  /**
+   * Title and URL of every entry of a content type, for navigation. Pages through the results:
+   * the Delivery API returns at most 100 entries per request.
+   */
+  getNavigation(contentType: string): Observable<{ title: string; url: string }[]> {
+    const PAGE = 100;
+    const fetchAll = async () => {
+      const all: { title: string; url: string }[] = [];
+      for (let skip = 0; ; skip += PAGE) {
+        const result: any = await this.stack
+          .contentType(contentType)
+          .entry()
+          .only(['title', 'url'])
+          .includeCount()
+          .limit(PAGE)
+          .skip(skip)
+          .find<{ title: string; url: string }>();
+        all.push(...(result.entries ?? []));
+        if (!result.entries?.length || all.length >= (result.count ?? 0)) break;
+      }
+      return all.filter((e) => e.url).sort((a, b) => a.title.localeCompare(b.title));
+    };
+    return from(fetchAll());
   }
 }
