@@ -1,6 +1,6 @@
 import { Component, OnInit, signal, inject } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { ContentstackService } from '../../services/contentstack.service';
-import ContentstackLivePreview from "@contentstack/live-preview-utils";
 
 @Component({
   selector: 'app-home',
@@ -11,6 +11,7 @@ import ContentstackLivePreview from "@contentstack/live-preview-utils";
 
 export class HomeComponent implements OnInit {
   private readonly contentstackService = inject(ContentstackService);
+  private readonly route = inject(ActivatedRoute);
 
   readonly page = signal<any>(null);
   readonly error = signal<string>('');
@@ -28,11 +29,8 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit() {
-    ContentstackLivePreview.onEntryChange(() => {
-      this.getContent()
-    });
-
-    // Load initial content
+    // In SSR mode Live Preview reloads the page with its parameters on every edit
+    this.contentstackService.applyLivePreview(this.route.snapshot.queryParams);
     this.getContent();
   }
 }

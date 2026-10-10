@@ -42,7 +42,18 @@
             "styles": [
               "src/global_styles.css"
             ],
-            "tsConfig": "tsconfig.app.json"
+            "tsConfig": "tsconfig.app.json",
+            "server": "src/main.server.ts",
+            "outputMode": "server",
+            "security": {
+              "allowedHosts": [
+                "localhost",
+                "*.eu-contentstackapps.com"
+              ]
+            },
+            "ssr": {
+              "entry": "src/server.ts"
+            }
           }
         },
         "serve": {
