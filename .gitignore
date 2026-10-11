@@ -8,3 +8,7 @@ dist/
 *.log
 # Contentstack Launch project link
 .cs-launch.json
+
+# csdx migration logs
+contentstack/logs/
+contentstack/migration-logs/

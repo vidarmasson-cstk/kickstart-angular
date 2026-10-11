@@ -176,7 +176,13 @@ module.exports = async ({ stackSDKInstance, managementAPIClient }) => {
   try { await stack.contentType(CONTENT_TYPE.uid).fetch(); } catch { exists = false; }
   if (exists) {
     const ct = await stack.contentType(CONTENT_TYPE.uid).fetch();
-    Object.assign(ct, { title: CONTENT_TYPE.title, description: CONTENT_TYPE.description, schema: CONTENT_TYPE.schema, options: CONTENT_TYPE.options });
+    // Keep block types added by later migrations (e.g. the Deal block from deals.migration.js) where they are
+    const schema = JSON.parse(JSON.stringify(CONTENT_TYPE.schema));
+    const blocks = schema.find((f) => f.uid === 'blocks').blocks;
+    (ct.schema.find((f) => f.uid === 'blocks')?.blocks ?? []).forEach((b, i) => {
+      if (!blocks.some((d) => d.uid === b.uid)) blocks.splice(i, 0, b);
+    });
+    Object.assign(ct, { title: CONTENT_TYPE.title, description: CONTENT_TYPE.description, schema, options: CONTENT_TYPE.options });
     await ct.update();
     console.log('Updated content type landing_page');
   } else {

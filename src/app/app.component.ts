@@ -16,7 +16,7 @@ import { AllPagesComponent } from './components/all-pages/all-pages.component';
     <header class="sticky top-0 z-20 bg-ck-red text-white shadow-md">
       <div class="ck-container flex h-16 items-center justify-between gap-6">
         <a routerLink="/" class="flex items-center rounded-xl bg-white px-3 py-1.5 no-underline shadow-sm" aria-label="Circle K home">
-          <img src="https://eu-images.contentstack.com/v3/assets/bltfb10c80b1d9f0d4c/am81cba4689222d3c4/ad68e2bd1ec7396d1cc86f46/circlek-logo.svg"
+          <img src="/circlek-logo.svg"
                alt="Circle K" class="h-8 w-auto" />
         </a>
         <nav class="flex items-center gap-1 overflow-x-auto text-sm font-semibold">

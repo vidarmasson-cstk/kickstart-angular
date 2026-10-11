@@ -30,7 +30,7 @@ const IMAGES = {
   fuel_banner: ['carousel-image/2024-09/CK_updated%20fuel%20banner_1000x640.png', 'Circle K fuel', 'Fuelling up at a Circle K station'],
 };
 
-module.exports = async ({ stackSDKInstance: stack }) => {
+module.exports = async ({ stackSDKInstance: stack, managementAPIClient }) => {
   // ---- 1. Upload (or reuse) the Circle K images
   const existing = (await stack.asset().query().find()).items ?? [];
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'circlek-'));
@@ -86,8 +86,11 @@ module.exports = async ({ stackSDKInstance: stack }) => {
   // ---- 3. Remove the old placeholder images (only those no longer used)
   for (const a of existing) {
     if (newUids.has(a.uid) || Object.values(IMAGES).some(([, title]) => title === a.title)) continue;
-    const refs = await stack.asset(a.uid).fetch({ include_publish_details: false }).catch(() => null);
-    if (!refs) continue;
+    const apiKey = stack.api_key ?? stack.stackHeaders?.api_key;
+    const res = await managementAPIClient.axiosInstance
+      .get(`/assets/${a.uid}/references`, { headers: { api_key: apiKey } })
+      .catch(() => null);
+    if (!res || res.data?.references?.length) continue; // in use, or unknown: keep it
     await stack.asset(a.uid).delete();
     console.log(`Deleted old asset ${a.title || a.filename}`);
   }

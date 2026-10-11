@@ -53,8 +53,35 @@ In your Contentstack Organization dashboard find `Org admin` and copy your Organ
 Make sure to replace `<YOUR_ORG_ID>` with your actual Organization ID and run the below.
 
 ```bash
-csdx cm:stacks:seed --repo "contentstack/kickstart-stack-seed" --org "<YOUR_ORG_ID>" -n "Kickstart Stack"
+csdx cm:stacks:seed --repo "contentstack/kickstart-stack-seed" --org "<YOUR_ORG_ID>" -n "Circle K Angular"
 ```
+
+### Add the Circle K demo content
+
+This fork turns the kickstart into a Circle K demo: a Landing Page content type, Circle K images and copy,
+and a reusable Deal global field used by Deal Pages and Landing Pages. Add it to the stack you just seeded:
+
+```bash
+npm install
+npm run setup:stack -- <YOUR_STACK_API_KEY>
+```
+
+The API key is shown when the seed finishes, and under Settings > Stack in Contentstack. The script runs the
+migrations in `contentstack/` in order:
+
+| Migration | What it does |
+|---|---|
+| `landing-page` | Landing Page content type, `/coffee` and `/ev-charging` pages, preview environment URL set to `http://localhost:4200/`, and a delivery and preview token written into `.env` |
+| `circlek-assets` | Uploads the Circle K images and puts them on the pages; deletes placeholder images nothing uses |
+| `homepage-copy` | Circle K copy on the home page |
+| `deals` | `deal` global field, Deal Page content type with three `/deals/...` pages, and a featured deal on `/coffee` |
+
+It creates `.env` from `.env.example` if needed. Each migration can be rerun safely, so if a step fails, fix
+the cause and run the script again. With the content in place, skip ahead to [Turn on Live Preview](#turn-on-live-preview).
+
+> The Circle K images are downloaded from circlek.ie and are for internal demos only.
+
+The next two steps are only needed for the plain kickstart, without `setup:stack`.
 
 ### Create a new delivery token.
 
