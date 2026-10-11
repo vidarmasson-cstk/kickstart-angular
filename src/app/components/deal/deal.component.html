@@ -1,0 +1,91 @@
+@let d = deal();
+
+<!-- Image on the red arc, with the round sticker badge (shared by every variant) -->
+<ng-template #visual>
+  <div class="relative overflow-hidden bg-ck-grey" [class.h-full]="variant() === 'feature'">
+    <div class="absolute left-1/2 top-0 h-[78%] w-[170%] -translate-x-1/2 rounded-b-[50%] bg-ck-red"></div>
+    @if (d.image) {
+      <div class="relative p-6 pb-10"><img [src]="d.image.url" [alt]="d.image.title" [attr.data-cslp]="cslp(d.image, 'url')"
+        class="mx-auto w-full rounded-2xl object-cover shadow-xl"
+        [class.max-h-96]="variant() === 'detail'" [class.h-56]="variant() === 'card'" [class.h-72]="variant() === 'feature'" /></div>
+    } @else {
+      <div class="relative h-56"></div>
+    }
+    @if (d.badge) {
+      <span class="absolute bottom-5 left-6 flex -rotate-6 items-center justify-center rounded-full border-4 border-white bg-ck-red text-center font-display font-extrabold uppercase leading-none text-white shadow-lg"
+        [class.h-28]="variant() === 'detail'" [class.w-28]="variant() === 'detail'" [class.text-2xl]="variant() === 'detail'"
+        [class.h-20]="variant() !== 'detail'" [class.w-20]="variant() !== 'detail'" [class.text-lg]="variant() !== 'detail'"
+        [attr.data-cslp]="cslp(d, 'badge')">{{ d.badge }}</span>
+    }
+  </div>
+</ng-template>
+
+<ng-template #button>
+  @if (d.cta_label && d.cta_url) {
+    @if (isInternal(d.cta_url)) {
+      <a [routerLink]="d.cta_url.split('#')[0]" [fragment]="d.cta_url.split('#')[1]" class="ck-button" [attr.data-cslp]="cslp(d, 'cta_label')">{{ d.cta_label }}</a>
+    } @else {
+      <a [href]="d.cta_url" class="ck-button" [attr.data-cslp]="cslp(d, 'cta_label')">{{ d.cta_label }}</a>
+    }
+  }
+</ng-template>
+
+@switch (variant()) {
+
+  @case ('detail') {
+    <article class="mx-auto max-w-2xl">
+      <ng-container *ngTemplateOutlet="visual"></ng-container>
+      <div class="px-5 py-8 md:px-0">
+        @if (category()) { <p class="text-ck-ink/70" [attr.data-cslp]="cslp(d, 'category')">{{ category() }}</p> }
+        <h1 class="mt-3 text-5xl md:text-6xl" [attr.data-cslp]="cslp(d, 'title')">{{ d.title }}</h1>
+        @if (d.summary) { <p class="mt-4 text-xl" [attr.data-cslp]="cslp(d, 'summary')">{{ d.summary }}</p> }
+        @if (expires()) { <p class="mt-3 text-lg font-bold" [attr.data-cslp]="cslp(d, 'valid_until')">{{ expires() }}</p> }
+        @if (d.intro) { <p class="mt-8 text-xl" [attr.data-cslp]="cslp(d, 'intro')">{{ d.intro }}</p> }
+        @if (d.steps?.length) {
+          <ol class="mt-4 space-y-4">
+            @for (step of visibleSteps(); track $index; let n = $index) {
+              <li class="flex items-start gap-4">
+                <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-ck-red font-bold text-white">{{ n + 1 }}</span>
+                <span class="pt-1 text-xl" [attr.data-cslp]="cslp(step, 'text')">{{ step.text }}</span>
+              </li>
+            }
+          </ol>
+          @if (d.steps.length > 1) {
+            <button type="button" (click)="expanded.set(!expanded())" class="mt-4 flex items-center gap-3 text-lg font-bold">
+              {{ expanded() ? 'Read less' : 'Read more' }}
+              <svg class="h-5 w-5 transition-transform" [class.rotate-180]="expanded()" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+          }
+        }
+        <div class="mt-8"><ng-container *ngTemplateOutlet="button"></ng-container></div>
+      </div>
+    </article>
+  }
+
+  @case ('feature') {
+    <section class="ck-container py-12">
+      <div class="grid overflow-hidden rounded-3xl border border-ck-line bg-white shadow-sm md:grid-cols-2">
+        <ng-container *ngTemplateOutlet="visual"></ng-container>
+        <div class="flex flex-col justify-center p-8 md:p-12">
+          <p class="ck-eyebrow">Deal{{ category() ? ' · ' + category() : '' }}</p>
+          <h2 class="mt-2 text-4xl md:text-5xl" [attr.data-cslp]="cslp(d, 'title')">{{ d.title }}</h2>
+          @if (d.summary) { <p class="mt-3 text-lg text-ck-ink/80" [attr.data-cslp]="cslp(d, 'summary')">{{ d.summary }}</p> }
+          @if (expires()) { <p class="mt-3 font-bold" [attr.data-cslp]="cslp(d, 'valid_until')">{{ expires() }}</p> }
+          <div class="mt-6"><ng-container *ngTemplateOutlet="button"></ng-container></div>
+        </div>
+      </div>
+    </section>
+  }
+
+  @case ('card') {
+    <article class="h-full overflow-hidden rounded-2xl border border-ck-line bg-white shadow-sm transition-shadow hover:shadow-lg">
+      <ng-container *ngTemplateOutlet="visual"></ng-container>
+      <div class="p-5">
+        @if (category()) { <p class="text-sm text-ck-ink/60">{{ category() }}</p> }
+        <h2 class="mt-1 text-3xl">{{ d.title }}</h2>
+        @if (d.summary) { <p class="mt-2 text-ck-ink/80">{{ d.summary }}</p> }
+        @if (expires()) { <p class="mt-3 text-sm font-bold">{{ expires() }}</p> }
+      </div>
+    </article>
+  }
+}

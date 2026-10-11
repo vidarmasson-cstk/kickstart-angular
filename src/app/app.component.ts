@@ -22,6 +22,8 @@ import { AllPagesComponent } from './components/all-pages/all-pages.component';
         <nav class="flex items-center gap-1 overflow-x-auto text-sm font-semibold">
           <a routerLink="/" routerLinkActive="bg-ck-red-dark" [routerLinkActiveOptions]="{ exact: true }"
              class="rounded-full px-4 py-2 no-underline hover:bg-ck-red-dark">Home</a>
+          <a routerLink="/deals" routerLinkActive="bg-ck-red-dark"
+             class="rounded-full px-4 py-2 no-underline hover:bg-ck-red-dark">Deals</a>
           @for (link of navigation(); track link.url) {
             <a [routerLink]="link.url" routerLinkActive="bg-ck-red-dark"
                class="whitespace-nowrap rounded-full px-4 py-2 no-underline hover:bg-ck-red-dark">{{ link.title }}</a>
@@ -42,6 +44,7 @@ import { AllPagesComponent } from './components/all-pages/all-pages.component';
         <div class="text-sm">
           <p class="mb-2 font-semibold">Explore</p>
           <ul class="space-y-1 text-white/80">
+            <li><a routerLink="/deals" class="no-underline hover:text-white">Deals</a></li>
             @for (link of navigation(); track link.url) {
               <li><a [routerLink]="link.url" class="no-underline hover:text-white">{{ link.title }}</a></li>
             }

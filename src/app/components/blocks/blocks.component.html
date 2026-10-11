@@ -43,6 +43,10 @@
         </section>
       }
 
+      @case ('deal') {
+        <app-deal [deal]="b" [variant]="dealVariant()"></app-deal>
+      }
+
       @case ('offer_cards') {
         <section id="offers" class="ck-container py-16">
           @if (b.heading) { <h2 class="text-4xl md:text-5xl" [attr.data-cslp]="cslp(b, 'heading')">{{ b.heading }}</h2> }

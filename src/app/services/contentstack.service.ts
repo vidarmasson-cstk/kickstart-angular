@@ -75,6 +75,23 @@ export class ContentstackService {
     );
   }
 
+  /** Every entry of a content type (first 100), with editable tags in preview. */
+  getEntries(contentType: string): Observable<any[]> {
+    const { contentstack: config } = environment;
+    return from(
+      this.stack
+        .contentType(contentType)
+        .entry()
+        .limit(100)
+        .find<Page>()
+        .then((result: any) => {
+          const entries = result.entries ?? [];
+          if (config.preview) entries.forEach((e: any) => contentstack.default.Utils.addEditableTags(e, contentType, true));
+          return entries;
+        })
+    );
+  }
+
   /**
    * Title and URL of every entry of a content type, for navigation. Pages through the results:
    * the Delivery API returns at most 100 entries per request.

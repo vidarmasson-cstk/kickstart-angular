@@ -1,6 +1,7 @@
 import { Component, input } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { DealComponent } from '../deal/deal.component';
 
 /**
  * Renders the modular blocks of a landing page. Each block is `{ <block uid>: { ...fields } }`;
@@ -9,12 +10,14 @@ import { RouterLink } from '@angular/router';
 @Component({
   selector: 'app-blocks',
   standalone: true,
-  imports: [RouterLink, NgTemplateOutlet],
+  imports: [RouterLink, NgTemplateOutlet, DealComponent],
   templateUrl: './blocks.component.html',
 })
 export class BlocksComponent {
   readonly blocks = input<any[]>([]);
   readonly tags = input<any>(null);
+  /** How the Deal block (the `deal` global field) renders: as the page itself, or featured in a landing page */
+  readonly dealVariant = input<'detail' | 'feature'>('feature');
 
   /** The block's type: its only key, ignoring live preview metadata. */
   typeOf(item: any): string {
