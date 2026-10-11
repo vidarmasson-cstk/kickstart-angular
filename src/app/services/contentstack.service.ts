@@ -54,13 +54,17 @@ export class ContentstackService {
     }
   }
 
-  getEntryByUrl(contentType: string, url: string): Observable<any> {
+  /**
+   * The entry of a content type whose `url` matches. `references` lists reference fields to resolve:
+   * without it, a reference field only holds the uid of the entry it points to.
+   */
+  getEntryByUrl(contentType: string, url: string, references: string[] = []): Observable<any> {
     const { contentstack: config } = environment;
+    let entries = this.stack.contentType(contentType).entry();
+    if (references.length) entries = entries.includeReference(references).includeReferenceContentTypeUID();
 
     return from(
-      this.stack
-        .contentType(contentType)
-        .entry()
+      entries
         .query()
         .where("url", QueryOperation.EQUALS, url)
         .find<Page>()

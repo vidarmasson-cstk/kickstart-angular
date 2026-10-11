@@ -156,7 +156,10 @@ async function upsertContentType(stack, def) {
   let ct = null;
   try { ct = await stack.contentType(def.uid).fetch(); } catch { /* new */ }
   if (ct) {
-    Object.assign(ct, { title: def.title, description: def.description, schema: def.schema, options: def.options });
+    // Keep fields added by later migrations (e.g. the Banner reference from banner.migration.js) where they are
+    const schema = [...def.schema];
+    ct.schema.forEach((f, i) => { if (!schema.some((d) => d.uid === f.uid)) schema.splice(i, 0, f); });
+    Object.assign(ct, { title: def.title, description: def.description, schema, options: def.options });
     await ct.update();
     console.log(`Updated content type ${def.uid}`);
   } else {

@@ -182,6 +182,8 @@ module.exports = async ({ stackSDKInstance, managementAPIClient }) => {
     (ct.schema.find((f) => f.uid === 'blocks')?.blocks ?? []).forEach((b, i) => {
       if (!blocks.some((d) => d.uid === b.uid)) blocks.splice(i, 0, b);
     });
+    // ... and fields added by later migrations (e.g. the Banner reference from banner.migration.js)
+    ct.schema.forEach((f, i) => { if (!schema.some((d) => d.uid === f.uid)) schema.splice(i, 0, f); });
     Object.assign(ct, { title: CONTENT_TYPE.title, description: CONTENT_TYPE.description, schema, options: CONTENT_TYPE.options });
     await ct.update();
     console.log('Updated content type landing_page');

@@ -75,11 +75,28 @@ migrations in `contentstack/` in order:
 | `circlek-assets` | Uploads the Circle K images and puts them on the pages; deletes placeholder images nothing uses |
 | `homepage-copy` | Circle K copy on the home page |
 | `deals` | `deal` global field, Deal Page content type with three `/deals/...` pages, and a featured deal on `/coffee` |
+| `banner` | Banner content type, a `banner` reference field on Landing Page and Deal Page, and two banners linked from five pages |
 
 It creates `.env` from `.env.example` if needed. Each migration can be rerun safely, so if a step fails, fix
 the cause and run the script again. With the content in place, skip ahead to [Turn on Live Preview](#turn-on-live-preview).
 
 > The Circle K images are downloaded from circlek.ie and are for internal demos only.
+
+#### Three ways to reuse content
+
+The demo shows the three ways Contentstack reuses content, each with a different trade-off:
+
+| | Example | What is reused | Edit once, changes everywhere? |
+|---|---|---|---|
+| **Modular block** | `promo_banner` block on a landing page | A block type within one content type | No: each page has its own copy |
+| **Global field** | `deal`, in Deal Page and Landing Page blocks | A field structure across content types | No: same fields, separate content in each entry |
+| **Reference** | `banner` field on Deal Page and Landing Page | A whole entry | Yes: pages point at one Banner entry |
+
+A reference stores only the uid of the entry it points to. To get the banner's content with the page, the query
+asks the Delivery API to include it: `getEntryByUrl('deal_page', path, ['banner'])` in
+`src/app/services/contentstack.service.ts` calls `includeReference('banner')`. Without that, `page.banner` holds
+just `[{ uid, _content_type_uid }]`. In Live Preview, clicking the banner text opens the Banner entry, and clicking
+around it opens the page's `banner` field.
 
 The next two steps are only needed for the plain kickstart, without `setup:stack`.
 

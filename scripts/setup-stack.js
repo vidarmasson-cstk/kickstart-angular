@@ -12,8 +12,9 @@ const { spawnSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-// Order matters: landing-page creates the Landing Page type and the tokens, deals uses the Circle K images
-const MIGRATIONS = ['landing-page', 'circlek-assets', 'homepage-copy', 'deals'];
+// Order matters: landing-page creates the Landing Page type and the tokens, deals uses the Circle K images,
+// banner adds a reference field to the page types the others create
+const MIGRATIONS = ['landing-page', 'circlek-assets', 'homepage-copy', 'deals', 'banner'];
 
 const root = path.join(__dirname, '..');
 const dir = path.join(root, 'contentstack');

@@ -4,13 +4,14 @@ import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { filter } from 'rxjs';
 import ContentstackLivePreview from "@contentstack/live-preview-utils";
 import { ContentstackService } from '../../services/contentstack.service';
+import { BannerComponent } from '../banner/banner.component';
 import { BlocksComponent } from '../blocks/blocks.component';
 
 /** Renders the deal_page entry whose `url` matches the current path (/deals/...). */
 @Component({
   selector: 'app-deal-page',
   standalone: true,
-  imports: [BlocksComponent, RouterLink],
+  imports: [BannerComponent, BlocksComponent, RouterLink],
   template: `
     <div class="border-b border-ck-line bg-white">
       <div class="ck-container relative flex h-14 items-center justify-center">
@@ -24,6 +25,10 @@ import { BlocksComponent } from '../blocks/blocks.component';
     @if (loading()) {
       <div class="ck-container py-24 text-center text-ck-ink/50">Loading…</div>
     } @else if (page()) {
+      <!-- banner is a reference field: an array with at most one banner entry, included by the query -->
+      @if (page()?.banner?.[0]; as banner) {
+        <div [attr.data-cslp]="page()?.$?.banner?.['data-cslp']"><app-banner [banner]="banner"></app-banner></div>
+      }
       <main [attr.data-cslp]="page()?.$?.blocks?.['data-cslp']">
         <app-blocks [blocks]="page()?.blocks ?? []" [tags]="page()?.$" dealVariant="detail"></app-blocks>
       </main>
@@ -61,7 +66,7 @@ export class DealPageComponent implements OnInit {
     if (!path.startsWith('/deals/')) return;
     this.path.set(path);
     if (showSpinner) this.loading.set(true);
-    this.contentstack.getEntryByUrl('deal_page', path).subscribe({
+    this.contentstack.getEntryByUrl('deal_page', path, ['banner']).subscribe({
       next: (entry) => {
         this.page.set(entry ?? null);
         this.error.set('');
